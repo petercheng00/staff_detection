@@ -25,8 +25,6 @@ class StaffImageDataset(Dataset):
         return len(self.in_files)
 
 # Data setup
-batch_size=8
-
 in_prefix = 'Training_GRAY/GR_'
 gt_prefix = 'Training_GT/Training_GT/GT_'
 file_suffixes = ["%04d.png" % x for x in range(1, 4001)]
@@ -35,6 +33,4 @@ gt_files = [gt_prefix + fs for fs in file_suffixes]
 in_train, in_test, gt_train, gt_test = train_test_split(in_files, gt_files, test_size=0.1, random_state=0)
 
 train_dataset = StaffImageDataset(in_train, gt_train)
-train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 test_dataset = StaffImageDataset(in_test, gt_test)
-test_data_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)

@@ -6,8 +6,10 @@ def convBlock(in_channels, out_channels, padding):
     return nn.Sequential(
         nn.Conv2d(in_channels, out_channels, 3, padding=padding),
         nn.ReLU(),
+        nn.BatchNorm2d(out_channels),
         nn.Conv2d(out_channels, out_channels, 3, padding=padding),
         nn.ReLU(),
+        nn.BatchNorm2d(out_channels)
     )
 
 # Skip connections are concatenated, cropping if size changed due to no padding

@@ -2,19 +2,23 @@ from apex import amp
 from sklearn.model_selection import train_test_split
 import torch
 from torch.utils.data import DataLoader
-from staff_image_dataset import train_data_loader
+from staff_image_dataset import train_data_loader, test_data_loader
 from unet import UNet
 
 # Hyperparameters
-epochs=10
+batch_size=8
+data_loader_parallel=4
+epochs=1
 learning_rate=0.01
-momentum=0.9
+
+train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=data_loader_parallel)
+test_data_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=data_loader_parallel)
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 net = UNet(depth=3, num_initial_channels=32, conv_padding=1).to(device)
 
 criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(net.parameters())
+optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
 
 net, optimizer = amp.initialize(net, optimizer, opt_level="O1")
 
