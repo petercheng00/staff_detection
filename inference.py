@@ -1,27 +1,12 @@
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 import torch
-from torch.utils.data import DataLoader
-from staff_image_dataset import StaffImageDataset
-from unet.unet import UNet
+from staff_image_dataset import train_dataset, test_dataset
+from unet import UNet
 from torchvision import transforms
 
-in_prefix = 'Training_GRAY_part_1/Training_GRAY_part_1/GR_'
-gt_prefix = 'Training_GT/Training_GT/GT_'
-
-file_suffixes = ["%04d.png" % x for x in range(1, 1001)]
-in_files = [in_prefix + fs for fs in file_suffixes]
-gt_files = [gt_prefix + fs for fs in file_suffixes]
-
-in_train, in_test, gt_train, gt_test = train_test_split(in_files, gt_files, test_size=0.2, random_state=0)
-
-# train_dataset = StaffImageDataset(in_train, gt_train)
-test_dataset = StaffImageDataset(in_test, gt_test)
-
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+net = UNet(depth=3, num_initial_channels=32, conv_padding=1).to(device)
 
-# net = UNet().to(device)
-net = UNet(depth=3, wf=5, padding=True, up_mode='upsample').to(device)
 checkpoint = torch.load('checkpoint0.ckpt')
 net.load_state_dict(checkpoint['model_state_dict'])
 
