@@ -57,10 +57,6 @@ class UNet(nn.Module):
             self.up_convs.append(convBlock(in_channels, out_channels, conv_padding))
             self.tp_convs.append(nn.ConvTranspose2d(in_channels, out_channels,
                                                     kernel_size=2, stride=2))
-            # self.tp_convs.append(nn.Sequential(
-                # nn.Upsample(mode='bilinear', scale_factor=2),
-                # nn.Conv2d(in_channels, out_channels, kernel_size=1)))
-
             in_channels = out_channels
             out_channels //= 2
 

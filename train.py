@@ -2,14 +2,14 @@ from apex import amp
 from sklearn.model_selection import train_test_split
 import torch
 from torch.utils.data import DataLoader
-from staff_image_dataset import train_data_loader, test_data_loader
+from staff_image_dataset import train_dataset, test_dataset
 from unet import UNet
 
 # Hyperparameters
 batch_size=8
-data_loader_parallel=4
-epochs=1
-learning_rate=0.01
+data_loader_parallel=2
+epochs=10
+learning_rate=0.001
 
 train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=data_loader_parallel)
 test_data_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True, num_workers=data_loader_parallel)
@@ -24,8 +24,6 @@ net, optimizer = amp.initialize(net, optimizer, opt_level="O1")
 
 # The training loop
 total_steps = len(train_data_loader)
-print(f"{epochs} epochs, {total_steps} total_steps per epoch")
-
 for epoch in range(epochs):
     net.train()
     for i, (in_images, gt_images) in enumerate(train_data_loader, 1):
@@ -52,7 +50,7 @@ for epoch in range(epochs):
     net.eval()
     with torch.no_grad():
         sum_loss = 0
-        for i, (in_images, gt_images) in enumerate(test_data_loader, 1):
+        for in_images, gt_images in test_data_loader:
             preds = net(in_images.to(device))
             gt_images = gt_images.squeeze(1).type(torch.LongTensor).to(device)
             sum_loss += criterion(preds, gt_images)

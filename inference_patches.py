@@ -6,10 +6,8 @@ from torchvision import transforms
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 net = UNet(depth=3, num_initial_channels=32, conv_padding=1).to(device)
-
 checkpoint = torch.load('checkpoint0.ckpt')
 net.load_state_dict(checkpoint['model_state_dict'])
-
 net.eval()
 
 for in_image, gt in test_dataset:
